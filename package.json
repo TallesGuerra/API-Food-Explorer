@@ -1,0 +1,13 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./src/server.js"
+    
+  },
+  "keywords": [],
+  "author": "Talles Guerra",
+  "license": "ISC",
+  "description": "API criada para projeto de conclusão do programa FullStack da Rocketseat"
+}
