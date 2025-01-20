@@ -36,7 +36,35 @@ class DishesController{
         return response.json({
             ...dish,
             tags
-        });
+        })
+    }
+
+    async delete(request, response){
+        const { id } = request.params
+
+        await knex("dishes").where({ id }).delete()
+
+        return response.json()
+    }
+
+    async index(request, response){
+        const { title, user_id, tags } = request.query;
+
+        let dishes;
+
+        if( tags ){
+            const filterTags = tags.split(',').map(tag => tag.trim());
+           
+            dishes = await knex("tags").whereIn("name", filterTags)
+
+        }else{
+            dishes = await knex("dishes")       
+          /*   .where({ user_id }) */
+            .whereLike("title", `%${title}%`)       
+            .orderBy("title");
+        }        
+    
+        return response.json({ dishes })
     }
 }
 
