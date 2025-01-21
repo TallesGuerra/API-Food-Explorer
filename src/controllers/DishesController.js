@@ -22,7 +22,7 @@ class DishesController{
 
         await knex("tags").insert(tagsInsert);
 
-        response.json();
+        return response.json();
 
     }
 
@@ -75,8 +75,9 @@ class DishesController{
         }        
     
         const userTags = await knex("tags").where({user_id});
+
         const dishesWithTags = dishes.map(dish => {
-        const {dishTags} = userTags.filter(tag => tag.dish_id === dish.id);
+        const dishTags = userTags.filter(tag => tag.dish_id === dish.id);
             
             return {
                 ...dish,
