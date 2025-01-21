@@ -76,12 +76,13 @@ class DishesController{
     
         const userTags = await knex("tags").where({user_id});
         const dishesWithTags = dishes.map(dish => {
-            const dishTags = userTags.filter(tag => tag.dish_id === dish.id);
-
+        const {dishTags} = userTags.filter(tag => tag.dish_id === dish.id);
+            
             return {
                 ...dish,
                 tags: dishTags
             }
+        
         });
 
         return response.json({ dishesWithTags })
