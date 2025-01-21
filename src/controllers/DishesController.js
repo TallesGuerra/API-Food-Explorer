@@ -53,18 +53,38 @@ class DishesController{
         let dishes;
 
         if( tags ){
-            const filterTags = tags.split(',').map(tag => tag.trim());
-           
-            dishes = await knex("tags").whereIn("name", filterTags)
+            const filterTags = tags.split(',').map(tag => tag.trim())
+
+            dishes = await knex("tags")
+            .select([
+                "dishes.id",
+                "dishes.title",
+                "dishes.user_id",
+            ])
+            .where("dishes.user_id", user_id)
+            .whereLike("dishes.title", `%${title}%`)
+            .whereIn("name", filterTags)
+            .innerJoin("dishes", "dishes.id", "tags.dish_id")
+            .orderBy("dishes.title")
 
         }else{
             dishes = await knex("dishes")       
-          /*   .where({ user_id }) */
+            /* .where({ user_id }) */
             .whereLike("title", `%${title}%`)       
             .orderBy("title");
         }        
     
-        return response.json({ dishes })
+        const userTags = await knex("tags").where({user_id});
+        const dishesWithTags = dishes.map(dish => {
+            const dishTags = userTags.filter(tag => tag.dish_id === dish.id);
+
+            return {
+                ...dish,
+                tags: dishTags
+            }
+        });
+
+        return response.json({ dishesWithTags })
     }
 }
 
