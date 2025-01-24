@@ -2,23 +2,23 @@ const knex = require("../database/knex");
 
 class DishesController{
     async create(request, response){
-        const { title, description, tags, price } = request.body;
-        const user_id  = request.user.id;
+        const { title, description, tags, price } = request.body
+        const user_id  = request.user.id
 
         const [dish_id] = await knex("dishes").insert({
             title,
             description,
             price,
-            user_id
+            user_id,
         });
 
-        const tagsInsert = tags.map(name => {
+        const tagsInsert = tags.map((name) => {
             return{
                 dish_id,
                 name,
-                user_id                
+                user_id,                
             }
-        });
+        })
 
         await knex("tags").insert(tagsInsert);
 
@@ -35,7 +35,7 @@ class DishesController{
 
         return response.json({
             ...dish,
-            tags
+            tags,
         })
     }
 
@@ -48,19 +48,19 @@ class DishesController{
     }
 
     async index(request, response){
-        const { title, tags } = request.query;
-        const user_id = request.user.id;
+        const { title, tags } = request.query
+        const user_id = request.user.id
 
-        let dishes;
+        let dishes
 
         if( tags ){
-            const filterTags = tags.split(',').map(tag => tag.trim())
+            const filterTags = tags.split(',').map((tag) => tag.trim())
 
             dishes = await knex("tags")
             .select([
                 "dishes.id",
                 "dishes.title",
-                "dishes.user_id",
+                "dishes.user_id"
             ])
             .where("dishes.user_id", user_id)
             .whereLike("dishes.title", `%${title}%`)
@@ -70,22 +70,22 @@ class DishesController{
 
         }else{
             dishes = await knex("dishes")       
-            /* .where({ user_id }) */
+            .where({ user_id })
             .whereLike("title", `%${title}%`)       
             .orderBy("title");
         }        
     
-        const userTags = await knex("tags").where({user_id});
+        const userTags = await knex("tags").where({ user_id });
 
-        const dishesWithTags = dishes.map(dish => {
-        const dishTags = userTags.filter(tag => tag.dish_id === dish.id);
+        const dishesWithTags = dishes.map((dish) => {
+        const dishTags = userTags.filter((tag) => tag.dish_id === dish.id);
             
             return {
                 ...dish,
-                tags: dishTags
+                tags: dishTags,
             }
         
-        });
+        })
 
         return response.json({ dishesWithTags })
     }

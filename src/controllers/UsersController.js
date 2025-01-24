@@ -65,6 +65,7 @@ class UsersController {
             user.password = await hash(password, 8);
         }
 
+        
         await database.run(`
             UPDATE users SET
             name = ?,

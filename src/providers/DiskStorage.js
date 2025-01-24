@@ -2,7 +2,6 @@ const fs = require("fs");
 const path = require("path");
 const uploadConfig = require("../configs/upload");
 
-
 class DiskStorage {
     async saveFile(file) {
         await fs.promises.rename(
@@ -26,4 +25,4 @@ class DiskStorage {
     }
 }
 
- module.exports = DiskStorage;
+module.exports = DiskStorage;
