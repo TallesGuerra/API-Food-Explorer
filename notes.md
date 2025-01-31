@@ -21,6 +21,12 @@ D - Delete » Delete
  -->
 
 
+<!-- 
+Comando para criar a migration
+
+npx knex migrate:make NOME DA MIGRATION
+-->
+
 
 
 Algumas das principais funções do módulo "fs" incluem:
