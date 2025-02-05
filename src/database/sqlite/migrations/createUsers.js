@@ -1,4 +1,4 @@
-const createUsers =`
+/* const createUsers =`
     CREATE TABLE IF NOT EXISTS users (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
     name VARCHAR,
@@ -11,9 +11,9 @@ const createUsers =`
 `;
 
 module.exports = createUsers;
+ */
 
-
-/* const createUsers = `
+const createUsers = `
     CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name VARCHAR,
@@ -25,5 +25,6 @@ module.exports = createUsers;
   )
 `;
 
-module.exports = createUsers; */
+module.exports = createUsers;
+
 

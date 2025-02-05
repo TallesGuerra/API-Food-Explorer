@@ -16,11 +16,11 @@ const dishesController = new DishesController();
 dishesRoutes.use(ensureAuthenticated);
 
 dishesRoutes.get("/", dishesController.index);
-dishesRoutes.post("/", upload.single("avatar"), dishesController.create);
+dishesRoutes.post("/", upload.single("image"), dishesController.create);
 dishesRoutes.get("/:id", dishesController.show);
 dishesRoutes.delete("/:id", dishesController.delete);
 
-dishesRoutes.patch("/:id", upload.single("avatar"), dishesController.update);
+dishesRoutes.patch("/:id", upload.single("image"), dishesController.update);
 
 module.exports = dishesRoutes; 
 

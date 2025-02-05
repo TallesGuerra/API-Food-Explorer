@@ -38,3 +38,21 @@ fs.mkdir(): cria um novo diretório.
 fs.unlink(): exclui um arquivo.
 fs.rename(): renomeia um arquivo ou diretório.
 fs.stat(): retorna o status do arquivo.
+
+
+
+
+<!-- LOGIN 
+	"name": "User",
+	"email": "user@email.com",
+	"password": "112233",
+	
+
+    "name": "Admin",
+	"email": "admin@email.com",
+	"password": "123456",
+	
+
+
+
+ -->
