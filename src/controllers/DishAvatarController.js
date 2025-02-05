@@ -8,7 +8,7 @@ class DishAvatarController {
         const dish_id = request.dish.id
         const avatarFilename = request.file.filename
 
-        const diskStorage = new DiskStorage();        
+        const diskStorage = new DiskStorage();
 
 
         const dish = await knex("dishes")
