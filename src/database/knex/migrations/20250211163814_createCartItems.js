@@ -1,15 +1,11 @@
-/**
- * @param { import("knex").Knex } knex
- * @returns { Promise<void> }
- */
-exports.up = function(knex) {
+exports.up = knex => knex.schema.createTable("cart_items", table => {
+    table.increments("id");
   
-};
-
-/**
- * @param { import("knex").Knex } knex
- * @returns { Promise<void> }
- */
-exports.down = function(knex) {
+    table.integer("cart_id").references("id").inTable("carts").onDelete("CASCADE");
+    table.integer("dish_id").references("id").inTable("dishes");
   
-};
+    table.text("name").notNullable();
+    table.integer("quantity").notNullable();
+  });
+  
+  exports.down = knex => knex.schema.dropTable("cart_items");
