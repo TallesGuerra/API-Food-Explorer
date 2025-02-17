@@ -6,11 +6,16 @@ class CartsController {
     const { cart_items } = request.body;
     const user_id = request.user.id;
 
+    console.log("➕ Criando carrinho para usuário:", user_id);
+    console.log("📦 Itens recebidos:", cart_items);
+
     const [cart_id] = await knex("carts").insert({
       created_by: user_id,
     });
 
-    const itemsInsert = cart_items.map(async ({ dish_id, name, quantity }) => {
+    console.log("✅ Carrinho criado com ID:", cart_id);
+
+    const itemsInsert = cart_items.map(({ dish_id, name, quantity }) => {
       return {
         cart_id,
         dish_id,
@@ -19,63 +24,55 @@ class CartsController {
       };
     });
 
-    await knex("cart_items").insert(await Promise.all(itemsInsert));
+    await knex("cart_items").insert(itemsInsert);
 
     return response.json({ id: cart_id });
+}
+
+async update(request, response) { 
+  const { id } = request.params;
+  const { cart_items } = request.body;
+
+  console.log("🚀 Atualizando carrinho ID:", id);
+  console.log("📦 Itens recebidos:", cart_items);
+
+  const cart = await knex("carts").where({ id }).first();
+
+  if (!cart) {
+    console.log("❌ Carrinho não encontrado!");
+    throw new AppError("Carrinho não encontrado.", 404);
   }
 
-  async show(request, response) {
-    const { id } = request.params;
+  const existingItems = await knex("cart_items")
+    .where({ cart_id: id })
+    .select("dish_id");
 
-    const cart = await knex("carts").where({ id }).first();
-    const cart_items = await knex("cart_items").where({ cart_id: id });
+  console.log("📌 Itens já no carrinho:", existingItems);
 
-    return response.json({
-      ...cart,
-      cart_items,
-    });
-  }
-
-  async update(request, response) { 
-    const { id } = request.params;
-    const { cart_items } = request.body;
-
-    const cart = await knex("carts").where({ id }).first();
-
-    if (!cart) {
-      throw new AppError("Carrinho não encontrado.", 404);
+  const updatedItems = cart_items.map(({ dish_id, name, quantity }) => {
+    if (existingItems.some((item) => item.dish_id === dish_id)) {
+      console.log(`🔄 Atualizando item ${dish_id}`);
+      return knex("cart_items")
+        .where({ cart_id: id, dish_id })
+        .update({ quantity });
+    } else {
+      console.log(`➕ Adicionando novo item ${dish_id}`);
+      return knex("cart_items").insert({
+        cart_id: id,
+        dish_id,
+        name,
+        quantity,
+      });
     }
+  });
 
-    const cartUpdate = {
-      updated_at: knex.fn.now(),
-    };
-  
-    const existingItems = await knex("cart_items")
-      .where({ cart_id: id })
-      .select("dish_id");
-  
-    const updatedItems = cart_items.map(({ dish_id, name, quantity }) => {
-      if (existingItems.some((item) => item.dish_id === dish_id)) {
-        return knex("cart_items")
-          .where({ cart_id: id, dish_id })
-          .update({ quantity });
-      } else {
-        return knex("cart_items").insert({
-          cart_id: id,
-          dish_id,
-          name,
-          quantity,
-        });
-      }
-    });
+  await Promise.all(updatedItems);
+  await knex("carts").where({ id }).update({ updated_at: knex.fn.now() });
 
-    await Promise.all(updatedItems);
-    await knex("carts").where({ id }).update(cartUpdate);
+  return response.json({ message: "Carrinho atualizado!" });
+}
 
-    return response.json();
-  }    
-
-  async index(request, response) {
+async index(request, response) {
     const user_id = request.user.id;
 
     const carts = await knex("carts")
@@ -86,7 +83,27 @@ class CartsController {
     return response.json(carts);
   }
 
-  async delete(request, response) {
+  async show(request, response) {
+    const { id } = request.params;
+  
+    console.log("🔍 Buscando carrinho ID:", id);
+  
+    const cart = await knex("carts").where({ id }).first();
+    const cart_items = await knex("cart_items").where({ cart_id: id });
+  
+    if (!cart) {
+      console.log("❌ Carrinho não encontrado!");
+      throw new AppError("Carrinho não encontrado.", 404);
+    }
+  
+    return response.json({
+      ...cart,
+      cart_items,
+    });
+  }
+  
+
+async delete(request, response) {
     const { id } = request.params;
 
     await knex("cart_items").where({ cart_id: id }).delete();
