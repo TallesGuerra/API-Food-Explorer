@@ -70,7 +70,7 @@ $ git clone https://github.com/TallesGuerra/API-Food-Explorer.git
 2. Acesse a pasta do projeto:
 
 ```
-$ cd food-explorer-backend
+$ cd API-Food-Explorer
 ```
 
 3. Instale as dependências:
